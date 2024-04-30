@@ -1,0 +1,16 @@
+.home{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pokemon-selector{
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+  max-width: 300px;
+  width: 100%;
+  margin: auto;
+}
