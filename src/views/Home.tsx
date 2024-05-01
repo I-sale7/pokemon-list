@@ -1,34 +1,62 @@
+import { Card } from "../components/Card/Card";
+import { Pokemon } from "../components/Pokemon/Pokemon";
+import { useGetPokemonByNameQuery } from "../services/pokemonAPI";
+import { useState } from "react";
+import "./Home.css";
+import { ListBox } from "primereact/listbox";
 
-import { CardComponent } from '../components/CardComponent/CardComponent';
-import { PokemonComponent } from '../components/PokemonComponent/PokemonComponent';
-import { useGetPokemonByNameQuery } from '../services/pokemonAPI';
-import { useState } from 'react'
-import "./Home.css"
+export const PokemonTemplate = (pokemon: any) => <h3>{pokemon.name}</h3>;
 
 export default function Home() {
-  const [selectedPokemon, setSelectedPokemon] = useState('');
-  const { data, error, isLoading } = useGetPokemonByNameQuery('');
-  
-  return (
-    <div className="home">
-      <div className='pokemon-selector'>
-        {error ?
-          <> {"There was an error while calling the API "}</> 
-        : isLoading ?
-          <>{"Loading..."} </>
-        : data ?
-          <select onChange={(event)=> setSelectedPokemon(event.target.value)} className='pokemon-card'>
-            <option value=''>{'Select a Pokemon..'}</option>
-            {data.results.map((pokemonnn: any, index: number) => {
-            return <option key={index} value={pokemonnn.name}> {pokemonnn.name} </option>
-          })} </select>: null}
+  const [selectedPokemon, setSelectedPokemon] = useState("");
+  const { data, error, isLoading } = useGetPokemonByNameQuery("");
 
-          {selectedPokemon && <>
-            <CardComponent className=''>
-              <PokemonComponent name={selectedPokemon}/>
-            </CardComponent>
-          </>}
+  const listBoxPokemon =
+    data &&
+    data.results.map((pokemon: any) => {
+      return {
+        name: pokemon.name,
+        label: pokemon.name,
+        value: pokemon.name,
+      };
+    });
+
+  if (error) {
+    return (
+      <div className="home">
+        <div className="pokemon-selector">
+          <p>{"There was an error while calling the API "}</p>
+        </div>
       </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="home">
+        <div className="pokemon-selector">
+          <p>{"Loading..."}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="pokemon-selector">
+      <ListBox
+        optionLabel="name"
+        value={selectedPokemon}
+        options={listBoxPokemon}
+        itemTemplate={PokemonTemplate}
+        onChange={(e) => setSelectedPokemon(e.value)}
+        className="pokemon-list"
+      />
+
+      {selectedPokemon && (
+        <Card className="pokemon-card">
+          <Pokemon name={selectedPokemon} />
+        </Card>
+      )}
     </div>
-  )
+  );
 }
